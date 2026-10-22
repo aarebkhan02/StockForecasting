@@ -204,51 +204,47 @@ h1, h2, h3, h4, .rms-hero-title, .rms-section-title, [data-testid="stMetricValue
 }
 
 .rms-pill-live {
-    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-    color: #047857;
-    border: 1px solid #6ee7b7;
-    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15);
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
+    color: #047857 !important;
+    border: none !important;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15) !important;
 }
 
 .rms-pill-live:hover {
-    background: #a7f3d0;
-    border-color: #34d399;
+    background: #a7f3d0 !important;
 }
 
 .rms-pill-info {
-    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    color: #1d4ed8;
-    border: 1px solid #93c5fd;
-    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.15);
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+    color: #1d4ed8 !important;
+    border: none !important;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.15) !important;
 }
 
 .rms-pill-info:hover {
-    background: #bfdbfe;
-    border-color: #60a5fa;
+    background: #bfdbfe !important;
 }
 
 .rms-pill-model {
     background: linear-gradient(135deg, #dcfce7 0%, #86efac 100%) !important;
     color: #14532d !important;
-    border: 1.5px solid #22c55e !important;
+    border: none !important;
     box-shadow: 0 2px 8px rgba(34, 197, 94, 0.25) !important;
 }
 
 .rms-pill-model:hover {
     background: #86efac !important;
-    border-color: #16a34a !important;
 }
 
 .rms-pill-date {
     background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
     color: #78350f !important;
-    border: 1.5px solid #f59e0b !important;
+    border: none !important;
     box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25) !important;
 }
 
 .rms-pill-date:hover {
     background: #fde68a !important;
-    border-color: #d97706 !important;
 }
 
 /* -------------------------------------------------------------
