@@ -228,27 +228,27 @@ h1, h2, h3, h4, .rms-hero-title, .rms-section-title, [data-testid="stMetricValue
 }
 
 .rms-pill-model {
-    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-    color: #b45309;
-    border: 1px solid #fcd34d;
-    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.15);
+    background: linear-gradient(135deg, #dcfce7 0%, #86efac 100%) !important;
+    color: #14532d !important;
+    border: 1.5px solid #22c55e !important;
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.25) !important;
 }
 
 .rms-pill-model:hover {
-    background: #fde68a;
-    border-color: #fbbf24;
+    background: #86efac !important;
+    border-color: #16a34a !important;
 }
 
 .rms-pill-date {
-    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-    color: #334155;
-    border: 1px solid #cbd5e1;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+    color: #78350f !important;
+    border: 1.5px solid #f59e0b !important;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25) !important;
 }
 
 .rms-pill-date:hover {
-    background: #cbd5e1;
-    border-color: #94a3b8;
+    background: #fde68a !important;
+    border-color: #d97706 !important;
 }
 
 /* -------------------------------------------------------------

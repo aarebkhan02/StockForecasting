@@ -244,8 +244,8 @@ st.markdown(
             </div>
         </div>
         <div class="rms-badge-group" style="margin-top:0.75rem !important; display:flex !important; flex-wrap:wrap !important; gap:0.55rem !important;">
-            <span class="rms-pill rms-pill-model" style="background:linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important; color:#047857 !important; border:1px solid #6ee7b7 !important; box-shadow:0 2px 6px rgba(16, 185, 129, 0.15) !important; font-weight:700 !important;">📈 Holt-Winters (7d Horizon)</span>
-            <span class="rms-pill rms-pill-date" style="background:linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important; color:#b45309 !important; border:1px solid #fcd34d !important; box-shadow:0 2px 6px rgba(245, 158, 11, 0.15) !important; font-weight:700 !important;">📅 Snapshot: 2026-09-22</span>
+            <span class="rms-pill rms-pill-model" style="background:linear-gradient(135deg, #dcfce7 0%, #86efac 100%) !important; color:#14532d !important; border:1.5px solid #22c55e !important; box-shadow:0 2px 8px rgba(34, 197, 94, 0.25) !important; font-weight:700 !important;">📈 Holt-Winters (7d Horizon)</span>
+            <span class="rms-pill rms-pill-date" style="background:linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important; color:#78350f !important; border:1.5px solid #f59e0b !important; box-shadow:0 2px 8px rgba(245, 158, 11, 0.25) !important; font-weight:700 !important;">📅 Snapshot: 2026-09-22</span>
             <span class="rms-pill rms-pill-info" style="background:linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important; color:#1d4ed8 !important; border:1px solid #93c5fd !important; box-shadow:0 2px 6px rgba(37, 99, 235, 0.15) !important; font-weight:700 !important;">🗓️ Window: {forecast_date_range_str}</span>
         </div>
     </div>

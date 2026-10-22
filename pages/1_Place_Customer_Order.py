@@ -113,7 +113,6 @@ st.markdown(
     """
     <div class="rms-hero-card rms-hero-order" style="position:relative; overflow:hidden; background:radial-gradient(circle at 92% 10%, rgba(245, 158, 11, 0.09) 0%, transparent 45%), radial-gradient(circle at 8% 85%, rgba(239, 68, 68, 0.06) 0%, transparent 40%), #ffffff !important; border:1px solid #e2e8f0 !important; border-top:3.5px solid #f59e0b !important; color:#0f172a !important; padding:1.35rem 1.75rem !important; border-radius:16px !important; box-shadow:0 4px 20px -2px rgba(245, 158, 11, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.03) !important; margin-bottom:1.5rem !important;">
         <div style="display:flex; align-items:center; gap:0.85rem;">
-            <div class="rms-hero-icon-box" style="background:linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important; border:1px solid #fed7aa !important; color:#ea580c !important; box-shadow:0 4px 10px rgba(245, 158, 11, 0.15) !important;">🛒</div>
             <div>
                 <h1 class="rms-hero-title" style="color:#0f172a !important; font-size:1.45rem !important; font-weight:800 !important; margin:0 !important; font-family:'Plus Jakarta Sans', sans-serif !important; letter-spacing:-0.025em !important;">
                     Place Customer Order &amp; Inventory Depletion
