@@ -233,15 +233,8 @@ forecast_date_range_str = f"{forecast_dates[0]:%Y-%m-%d} to {forecast_dates[-1]:
 st.markdown(
     f"""
     <div class="rms-hero-card rms-hero-dashboard" style="position:relative; overflow:hidden; background:radial-gradient(circle at 92% 10%, rgba(99, 102, 241, 0.09) 0%, transparent 45%), radial-gradient(circle at 8% 85%, rgba(14, 165, 233, 0.07) 0%, transparent 40%), #ffffff !important; border:1px solid #e2e8f0 !important; border-top:3.5px solid #2563eb !important; color:#0f172a !important; padding:1.35rem 1.75rem !important; border-radius:16px !important; box-shadow:0 4px 20px -2px rgba(99, 102, 241, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.03) !important; margin-bottom:1.5rem !important;">
-        <div style="display:flex; align-items:center; gap:0.85rem;">
-            <div>
-                <h1 class="rms-hero-title" style="color:#0f172a !important; font-size:1.45rem !important; font-weight:800 !important; margin:0 !important; font-family:'Plus Jakarta Sans', sans-serif !important; letter-spacing:-0.025em !important;">
-                    Restaurant Inventory Forecasting &amp; Replenishment Dashboard
-                </h1>
-                <div class="rms-hero-subtitle" style="color:#475569 !important; font-size:0.9rem !important; margin:0.4rem 0 0 0 !important; line-height:1.5 !important;">
-                    Weekly Holt-Winters demand forecasts, dynamic safety stock, and automated replenishment.
-                </div>
-            </div>
+        <div class="rms-hero-subtitle" style="color:#475569 !important; font-size:0.95rem !important; font-weight:500 !important; margin:0 !important; line-height:1.5 !important;">
+            Weekly Holt-Winters demand forecasts, dynamic safety stock, and automated replenishment.
         </div>
         <div class="rms-badge-group" style="margin-top:0.75rem !important; display:flex !important; flex-wrap:wrap !important; gap:0.55rem !important;">
             <span class="rms-pill rms-pill-model" style="background:linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important; color:#047857 !important; border:1px solid #6ee7b7 !important; box-shadow:0 2px 6px rgba(16, 185, 129, 0.15) !important; font-weight:700 !important;">📈 Holt-Winters (7d Horizon)</span>
