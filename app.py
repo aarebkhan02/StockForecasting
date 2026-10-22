@@ -244,9 +244,8 @@ st.markdown(
             </div>
         </div>
         <div class="rms-badge-group" style="margin-top:0.75rem !important; display:flex !important; flex-wrap:wrap !important; gap:0.55rem !important;">
-            <span class="rms-pill rms-pill-live" style="background:linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important; color:#047857 !important; border:1px solid #6ee7b7 !important; box-shadow:0 2px 6px rgba(16, 185, 129, 0.15) !important; font-weight:700 !important;"><span class="rms-pulse-dot"></span> Live Operational Stock</span>
-            <span class="rms-pill rms-pill-model" style="background:linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important; color:#b45309 !important; border:1px solid #fcd34d !important; box-shadow:0 2px 6px rgba(16, 185, 129, 0.15) !important; font-weight:700 !important;">📈 Holt-Winters (7d Horizon)</span>
-            <span class="rms-pill rms-pill-date" style="background:linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important; color:#334155 !important; border:1px solid #cbd5e1 !important; box-shadow:0 1px 3px rgba(0, 0, 0, 0.04) !important; font-weight:700 !important;">📅 Snapshot: 2026-09-22</span>
+            <span class="rms-pill rms-pill-model" style="background:linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important; color:#047857 !important; border:1px solid #6ee7b7 !important; box-shadow:0 2px 6px rgba(16, 185, 129, 0.15) !important; font-weight:700 !important;">📈 Holt-Winters (7d Horizon)</span>
+            <span class="rms-pill rms-pill-date" style="background:linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important; color:#b45309 !important; border:1px solid #fcd34d !important; box-shadow:0 2px 6px rgba(245, 158, 11, 0.15) !important; font-weight:700 !important;">📅 Snapshot: 2026-09-22</span>
             <span class="rms-pill rms-pill-info" style="background:linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important; color:#1d4ed8 !important; border:1px solid #93c5fd !important; box-shadow:0 2px 6px rgba(37, 99, 235, 0.15) !important; font-weight:700 !important;">🗓️ Window: {forecast_date_range_str}</span>
         </div>
     </div>
