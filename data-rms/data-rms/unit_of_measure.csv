@@ -1,0 +1,6 @@
+id,code,name,dimension,is_base
+1,kg,Kilogram,MASS,True
+2,g,Gram,MASS,False
+3,l,Litre,VOLUME,True
+4,ml,Millilitre,VOLUME,False
+5,pc,Piece,COUNT,True

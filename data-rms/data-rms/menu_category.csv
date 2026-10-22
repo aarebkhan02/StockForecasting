@@ -1,0 +1,5 @@
+id,menu_id,name,sort_order
+1,1,Main Course,0
+2,1,Rice,1
+3,1,Bread,2
+4,1,Beverage,3

@@ -1,0 +1,11 @@
+id,recipe_id,version_no,state,yield_qty,yield_uom_id,cost_snapshot,activated_at,archived_at
+1,1,1,ACTIVE,1,5,,2025-11-27,
+2,2,1,ACTIVE,1,5,,2025-11-27,
+3,3,1,ACTIVE,1,5,,2025-11-27,
+4,4,1,ACTIVE,1,5,,2025-11-27,
+5,5,1,ACTIVE,1,5,,2025-11-27,
+6,6,1,ACTIVE,1,5,,2025-11-27,
+7,7,1,ACTIVE,1,5,,2025-11-27,
+8,8,1,ACTIVE,1,5,,2025-11-27,
+9,9,1,ACTIVE,1,5,,2025-11-27,
+10,10,1,ACTIVE,1,5,,2025-11-27,

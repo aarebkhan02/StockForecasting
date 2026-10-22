@@ -1,0 +1,11 @@
+id,menu_item_id,name,is_sub_recipe,is_active,created_at
+1,1,Butter Chicken recipe,False,True,2025-11-27
+2,2,Chicken Biryani recipe,False,True,2025-11-27
+3,3,Paneer Butter Masala recipe,False,True,2025-11-27
+4,4,Palak Paneer recipe,False,True,2025-11-27
+5,5,Dal Tadka recipe,False,True,2025-11-27
+6,6,Veg Biryani recipe,False,True,2025-11-27
+7,7,Butter Naan recipe,False,True,2025-11-27
+8,8,Cheese Paratha recipe,False,True,2025-11-27
+9,9,Masala Chai recipe,False,True,2025-11-27
+10,10,Aloo Gobi recipe,False,True,2025-11-27

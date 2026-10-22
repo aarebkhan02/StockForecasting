@@ -1,0 +1,11 @@
+id,category_id,name,price,is_available,created_at
+1,1,Butter Chicken,380,True,2025-11-27
+2,2,Chicken Biryani,320,True,2025-11-27
+3,1,Paneer Butter Masala,300,True,2025-11-27
+4,1,Palak Paneer,280,True,2025-11-27
+5,1,Dal Tadka,200,True,2025-11-27
+6,2,Veg Biryani,240,True,2025-11-27
+7,3,Butter Naan,60,True,2025-11-27
+8,3,Cheese Paratha,150,True,2025-11-27
+9,4,Masala Chai,40,True,2025-11-27
+10,1,Aloo Gobi,180,True,2025-11-27
