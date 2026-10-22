@@ -111,22 +111,22 @@ with st.sidebar:
 # Page Hero Header
 st.markdown(
     """
-    <div class="rms-hero-card rms-hero-order" style="background:#ffffff !important; border:1px solid #e2e8f0 !important; border-left:4px solid #f59e0b !important; color:#0f172a !important; padding:1.25rem 1.6rem !important; border-radius:14px !important; box-shadow:0 2px 10px -2px rgba(15,23,42,0.05) !important; margin-bottom:1.4rem !important;">
+    <div class="rms-hero-card rms-hero-order" style="position:relative; overflow:hidden; background:radial-gradient(circle at 92% 10%, rgba(245, 158, 11, 0.09) 0%, transparent 45%), radial-gradient(circle at 8% 85%, rgba(239, 68, 68, 0.06) 0%, transparent 40%), #ffffff !important; border:1px solid #e2e8f0 !important; border-top:3.5px solid #f59e0b !important; color:#0f172a !important; padding:1.35rem 1.75rem !important; border-radius:16px !important; box-shadow:0 4px 20px -2px rgba(245, 158, 11, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.03) !important; margin-bottom:1.5rem !important;">
         <div style="display:flex; align-items:center; gap:0.85rem;">
-            <div class="rms-hero-icon-box" style="background:#fffbeb !important; border:1px solid #fed7aa !important; color:#ea580c !important;">🛒</div>
+            <div class="rms-hero-icon-box" style="background:linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important; border:1px solid #fed7aa !important; color:#ea580c !important; box-shadow:0 4px 10px rgba(245, 158, 11, 0.15) !important;">🛒</div>
             <div>
-                <h1 class="rms-hero-title" style="color:#0f172a !important; font-size:1.4rem !important; font-weight:800 !important; margin:0 !important;">
+                <h1 class="rms-hero-title" style="color:#0f172a !important; font-size:1.45rem !important; font-weight:800 !important; margin:0 !important; font-family:'Plus Jakarta Sans', sans-serif !important; letter-spacing:-0.025em !important;">
                     Place Customer Order &amp; Inventory Depletion
                 </h1>
-                <div class="rms-hero-subtitle" style="color:#475569 !important; font-size:0.885rem !important; margin:0.35rem 0 0 0 !important;">
+                <div class="rms-hero-subtitle" style="color:#475569 !important; font-size:0.9rem !important; margin:0.4rem 0 0 0 !important; line-height:1.5 !important;">
                     Verify recipe requirements and atomically deduct operational kitchen stock in real time.
                 </div>
             </div>
         </div>
-        <div class="rms-badge-group" style="margin-top:0.65rem !important; display:flex !important; flex-wrap:wrap !important; gap:0.5rem !important;">
-            <span class="rms-pill rms-pill-live" style="background:#ecfdf5 !important; color:#065f46 !important; border:1px solid #a7f3d0 !important;"><span class="rms-pulse-dot"></span> Live Operational Stock</span>
-            <span class="rms-pill rms-pill-model" style="background:#fffbeb !important; color:#92400e !important; border:1px solid #fde68a !important;">🍲 BOM &amp; Wastage Engine</span>
-            <span class="rms-pill rms-pill-info" style="background:#eff6ff !important; color:#1d4ed8 !important; border:1px solid #bfdbfe !important;">⚡ Instant Stock Recalculation</span>
+        <div class="rms-badge-group" style="margin-top:0.75rem !important; display:flex !important; flex-wrap:wrap !important; gap:0.55rem !important;">
+            <span class="rms-pill rms-pill-live" style="background:linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important; color:#047857 !important; border:1px solid #6ee7b7 !important; box-shadow:0 2px 6px rgba(16, 185, 129, 0.15) !important; font-weight:700 !important;"><span class="rms-pulse-dot"></span> Live Operational Stock</span>
+            <span class="rms-pill rms-pill-model" style="background:linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%) !important; color:#c2410c !important; border:1px solid #fed7aa !important; box-shadow:0 2px 6px rgba(234, 88, 12, 0.15) !important; font-weight:700 !important;">🍲 BOM &amp; Wastage Engine</span>
+            <span class="rms-pill rms-pill-info" style="background:linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%) !important; color:#7e22ce !important; border:1px solid #e9d5ff !important; box-shadow:0 2px 6px rgba(147, 51, 234, 0.15) !important; font-weight:700 !important;">⚡ Instant Stock Recalculation</span>
         </div>
     </div>
     """,

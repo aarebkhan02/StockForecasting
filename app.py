@@ -232,22 +232,22 @@ forecast_date_range_str = f"{forecast_dates[0]:%Y-%m-%d} to {forecast_dates[-1]:
 # -----------------------------
 st.markdown(
     f"""
-    <div class="rms-hero-card rms-hero-dashboard" style="background:#ffffff !important; border:1px solid #e2e8f0 !important; border-left:4px solid #2563eb !important; color:#0f172a !important; padding:1.25rem 1.6rem !important; border-radius:14px !important; box-shadow:0 2px 10px -2px rgba(15,23,42,0.05) !important; margin-bottom:1.4rem !important;">
+    <div class="rms-hero-card rms-hero-dashboard" style="position:relative; overflow:hidden; background:radial-gradient(circle at 92% 10%, rgba(99, 102, 241, 0.09) 0%, transparent 45%), radial-gradient(circle at 8% 85%, rgba(14, 165, 233, 0.07) 0%, transparent 40%), #ffffff !important; border:1px solid #e2e8f0 !important; border-top:3.5px solid #2563eb !important; color:#0f172a !important; padding:1.35rem 1.75rem !important; border-radius:16px !important; box-shadow:0 4px 20px -2px rgba(99, 102, 241, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.03) !important; margin-bottom:1.5rem !important;">
         <div style="display:flex; align-items:center; gap:0.85rem;">
             <div>
-                <h1 class="rms-hero-title" style="color:#0f172a !important; font-size:1.4rem !important; font-weight:800 !important; margin:0 !important;">
+                <h1 class="rms-hero-title" style="color:#0f172a !important; font-size:1.45rem !important; font-weight:800 !important; margin:0 !important; font-family:'Plus Jakarta Sans', sans-serif !important; letter-spacing:-0.025em !important;">
                     Restaurant Inventory Forecasting &amp; Replenishment Dashboard
                 </h1>
-                <div class="rms-hero-subtitle" style="color:#475569 !important; font-size:0.885rem !important; margin:0.35rem 0 0 0 !important;">
+                <div class="rms-hero-subtitle" style="color:#475569 !important; font-size:0.9rem !important; margin:0.4rem 0 0 0 !important; line-height:1.5 !important;">
                     Weekly Holt-Winters demand forecasts, dynamic safety stock, and automated replenishment.
                 </div>
             </div>
         </div>
-        <div class="rms-badge-group" style="margin-top:0.65rem !important; display:flex !important; flex-wrap:wrap !important; gap:0.5rem !important;">
-            <span class="rms-pill rms-pill-live" style="background:#ecfdf5 !important; color:#065f46 !important; border:1px solid #a7f3d0 !important;"><span class="rms-pulse-dot"></span> Live Operational Stock</span>
-            <span class="rms-pill rms-pill-model" style="background:#fffbeb !important; color:#92400e !important; border:1px solid #fde68a !important;">📈 Holt-Winters (7d Horizon)</span>
-            <span class="rms-pill rms-pill-date" style="background:#f1f5f9 !important; color:#334155 !important; border:1px solid #cbd5e1 !important;">📅 Snapshot: 2026-09-22</span>
-            <span class="rms-pill rms-pill-info" style="background:#eff6ff !important; color:#1d4ed8 !important; border:1px solid #bfdbfe !important;">🗓️ Window: {forecast_date_range_str}</span>
+        <div class="rms-badge-group" style="margin-top:0.75rem !important; display:flex !important; flex-wrap:wrap !important; gap:0.55rem !important;">
+            <span class="rms-pill rms-pill-live" style="background:linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important; color:#047857 !important; border:1px solid #6ee7b7 !important; box-shadow:0 2px 6px rgba(16, 185, 129, 0.15) !important; font-weight:700 !important;"><span class="rms-pulse-dot"></span> Live Operational Stock</span>
+            <span class="rms-pill rms-pill-model" style="background:linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important; color:#b45309 !important; border:1px solid #fcd34d !important; box-shadow:0 2px 6px rgba(245, 158, 11, 0.15) !important; font-weight:700 !important;">📈 Holt-Winters (7d Horizon)</span>
+            <span class="rms-pill rms-pill-date" style="background:linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important; color:#334155 !important; border:1px solid #cbd5e1 !important; box-shadow:0 1px 3px rgba(0, 0, 0, 0.04) !important; font-weight:700 !important;">📅 Snapshot: 2026-09-22</span>
+            <span class="rms-pill rms-pill-info" style="background:linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important; color:#1d4ed8 !important; border:1px solid #93c5fd !important; box-shadow:0 2px 6px rgba(37, 99, 235, 0.15) !important; font-weight:700 !important;">🗓️ Window: {forecast_date_range_str}</span>
         </div>
     </div>
     """,
