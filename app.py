@@ -119,6 +119,7 @@ with st.sidebar:
     st.markdown("### 🧭 Navigation")
     st.page_link("app.py", label="Replenishment Dashboard", icon="📊")
     st.page_link("pages/1_Place_Customer_Order.py", label="Place Customer Order", icon="🛒")
+    st.page_link("pages/2_Spoilage_Forecasting.py", label="Spoilage Forecasting", icon="🥀")
     st.divider()
 
     st.markdown("### ⚙️ Replenishment Controls")
@@ -782,10 +783,126 @@ else:
 
 
 # -----------------------------
+# 10. Section F: Complete Calculation & Formula Explanations
+# -----------------------------
+st.markdown("---")
+with st.expander("📐 How are these values calculated? (Complete Formula & Calculation Guide)", expanded=False):
+    st.markdown(
+        r"""
+### 🧭 Complete Stockout Forecasting & Replenishment Calculation Guide
+
+This guide details the mathematical foundations, data sources, Python functions, and exact derivation steps for every metric, column, and recommendation displayed in this dashboard.
+
+---
+
+#### 1. Data Sources & Pipeline Architecture
+The values in this dashboard originate from raw operational datasets and undergo systematic preprocessing:
+- **Historical Sales Demand:** Extracted from `order.csv` (26,919 orders) and `order_item.csv` (49,683 items), linked through active recipes (`recipe.csv`, `recipe_version.csv`, `recipe_ingredient.csv`) and normalized to base units via `uom_conversion.csv`. Grouped daily to produce `DataCleaned/daily_ingredient_demand.csv`.
+- **Current Physical Inventory ($S_{i,0}$):** Sourced from `data-rms/data-rms/stock_balance.csv` (`qty_base`). Held in Streamlit `st.session_state.simulated_stock` so demo order deductions operate atomically in memory without mutating raw files.
+- **Supplier Lead Times ($L_i, \sigma_{L,i}^2$):** Derived in `lead_time.ipynb` and stored in `lead_time_outputs/full_lead_time_summary.csv`. Tracks calendar days until cumulative accepted receipts reached 100% of purchase order quantities.
+- **Active Inbound Orders ($\text{Incoming}_i$):** Extracted from `purchase_order.csv` and `purchase_order_item.csv` (state `'APPROVED'` with pending quantities).
+
+---
+
+#### 2. Demand Forecasting (`generate_holt_winters_forecasts` in `replenishment_engine.py`)
+- **Daily Continuity & Interpolation:** Daily series are converted to explicit calendar frequency (`.asfreq('D')`). Any missing intermediate dates are linearly interpolated (`series.interpolate(method='linear')`).
+- **Algorithm:** Additive Holt-Winters Exponential Smoothing (`statsmodels.tsa.holtwinters.ExponentialSmoothing`):
+  $$\hat{D}_{i,t} = \ell_{i,t-1} + b_{i,t-1} + s_{i,t-m}$$
+  Where trend is additive (`trend="add"`), weekly seasonality is additive (`seasonal="add"`), and period $m = 7$ days.
+- **Negative Forecast Clipping:** Raw model forecasts are clipped to non-negative values:
+  $$\hat{D}_{i,t} = \max\left(0.0, \hat{D}_{\text{raw}, i, t}\right)$$
+- **Historical Mean Fallback:** If numerical optimization fails on sparse data, the engine automatically falls back to historical average daily demand: $\hat{D}_{i,t} = \max\left(0.0, \bar{D}_{i, \text{hist}}\right)$.
+- **Forecast Daily Demand (Displayed):** Simple arithmetic mean of daily predictions across horizon $H$:
+  $$\text{Forecast Daily Demand} = \frac{1}{H} \sum_{t=1}^H \hat{D}_{i,t}$$
+
+---
+
+#### 3. Dynamic Safety Stock ($SS_i$) (`calculate_dynamic_safety_stock` in `replenishment_engine.py`)
+Safety stock protects against both volatile customer orders and unpredictable supplier deliveries using the dual-uncertainty formula:
+$$SS_i = z \times \sqrt{L_i \cdot \sigma_{D,i}^2 + \hat{D}_{\text{mean}, i}^2 \cdot \sigma_{L,i}^2}$$
+
+Where:
+- $z$: Service level factor (default $1.645$ for nominal 95% one-sided normal cycle service level; configurable $1.282$ for 90%, $2.326$ for 99%).
+- $L_i$: Average full-delivery lead time in calendar days (`avg_full_lead_time_days` from `full_lead_time_summary.csv`).
+- $\sigma_{D,i}^2$: Historical daily demand sample variance (`series.var()`).
+- $\hat{D}_{\text{mean}, i}$: Mean forecast daily demand over the replenishment coverage window.
+- $\sigma_{L,i}^2$: Full-delivery lead-time sample variance (`full_lead_time_variance`).
+- **Demand Uncertainty Component:** $L_i \cdot \sigma_{D,i}^2$ represents demand variation accumulating over the duration of lead time.
+- **Lead-Time Uncertainty Component:** $\hat{D}_{\text{mean}, i}^2 \cdot \sigma_{L,i}^2$ represents inventory risk when vendor shipments are delayed.
+
+---
+
+#### 4. Current Safety Buffer ($B_i$) (`calculate_safety_buffer` in `replenishment_engine.py`)
+Measures the verified stock remaining after serving forecast demand during supplier lead time:
+$$B_i = S_{i,0} - D_{\text{lead\_time}, i}$$
+Where lead-time demand is prorated for fractional days ($d_{\text{full}} = \lfloor L_i \rfloor$, $d_{\text{frac}} = L_i - d_{\text{full}}$):
+$$D_{\text{lead\_time}, i} = \sum_{t=1}^{d_{\text{full}}} \hat{D}_{i,t} + \left( d_{\text{frac}} \times \hat{D}_{i, d_{\text{full}}+1} \right)$$
+- **Buffer Status:**
+  - $\text{"Adequate"}$ if $B_i \ge SS_i$.
+  - $\text{"Deficit"}$ if $B_i < SS_i$, displaying the shortfall amount: $\text{Deficit} = -(SS_i - B_i)$.
+
+---
+
+#### 5. Stock Trajectory & Stockout Date (`project_stock_trajectory` in `replenishment_engine.py`)
+Simulates day-by-day unconstrained balance across forecast horizon $t \in \{1, 2, \dots, H\}$:
+$$S_{i,t} = S_{i,t-1} - \hat{D}_{i,t} + \text{Incoming}_{i,t}$$
+- **Incoming Crediting Rule:** Inbound PO quantities are credited **strictly on their recorded expected arrival date** (`arrivals = incoming[expected_date == f_norm]`).
+- **Stockout Day ($t_{\text{stockout}}$):** The first step index $t$ where unconstrained balance $S_{i,t} \le 0.0$.
+- **Stockout Date:** Calendar date corresponding to step $t_{\text{stockout}}$ ($t_{\text{latest}} + t_{\text{stockout}} \text{ days}$).
+- **Stock @ Delivery:** Projected stock at delivery arrival day $\lceil L_i \rceil$: $S_{i, \lceil L_i \rceil}$.
+- **Physically Available Stock:** $\max(0.0, S_{i,t})$.
+- **Cumulative Shortage:** $\max(0.0, -S_{i,t})$.
+
+---
+
+#### 6. Stockout Risk Classification (`classify_risk` in `replenishment_engine.py`)
+- **Critical:** $t_{\text{stockout}} \le L_i$. Projected stockout occurs earlier than or equal to supplier lead time. A stockout is unavoidable via normal procurement.
+- **At Risk:** $t_{\text{stockout}} \le H$ (after lead time but within horizon), OR $S_{i, \lceil L_i \rceil} < SS_i$ (stock at delivery day falls below safety stock), OR $B_i < SS_i$ (safety buffer deficit).
+- **Sufficient:** No stockout projected across horizon $H$, stock at delivery day $\ge SS_i$, and current buffer $\ge SS_i$.
+- **Unknown:** Incomplete historical records or missing supplier lead time.
+
+---
+
+#### 7. Recommended Reorder Quantity ($Q_i$) (`calculate_replenishment_recommendation` in `replenishment_engine.py`)
+Calculates net purchase order quantity required to cover lead time plus review period ($C_i = L_i + R$):
+$$Q_{\text{raw}, i} = \max\left(0.0, D_{\text{cov}, i} + SS_i - (S_{i,0} + \text{Eligible Incoming}_i)\right)$$
+$$Q_{\text{recommended}, i} = \text{round}(Q_{\text{raw}, i}, 2)$$
+
+Where:
+- $D_{\text{cov}, i}$: Prorated forecast demand over coverage window $C_i = L_i + R$:
+  $$D_{\text{cov}, i} = \sum_{t=1}^{\lfloor C_i \rfloor} \hat{D}_{i,t} + (C_i - \lfloor C_i \rfloor) \times \hat{D}_{i, \lfloor C_i \rfloor + 1}$$
+- $\text{Eligible Incoming}_i$: Sum of pending quantities in `'APPROVED'` POs arriving within the coverage window ($\text{expected\_date} \le t_{\text{latest}} + \lceil C_i \rceil$). Orders arriving after coverage are excluded.
+- If $Q_{\text{recommended}, i} > 0 \implies \text{Reorder Required}$.
+
+---
+
+#### 8. Column-by-Column Derivation & Real Numerical Examples
+
+| Displayed Column | Formula / Calculation | Inputs & Source | Example: Chicken (ING-CHI01) | Example: Paneer (ING-PAN02) | Example: Basmati Rice (ING-BAS03) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Current Stock** | $S_{i,0} = \sum \text{qty\_base}$ | `stock_balance.csv` / session state | **$21.29\text{ kg}$** | **$0.40\text{ kg}$** | **$33.77\text{ kg}$** |
+| **Required Safety Stock (SS)**| $z \sqrt{L_i \sigma_D^2 + \hat{D}^2 \sigma_L^2}$ | $z=1.645$, $L_i, \sigma_L^2$ (`full_lead_time_summary`), $\sigma_D^2, \hat{D}$ | **$35.98\text{ kg}$** | **$13.32\text{ kg}$** | **$25.19\text{ kg}$** |
+| **Current Safety Buffer (B)** | $S_{i,0} - D_{\text{lead\_time}}$ | Current Stock, lead-time demand | $21.29 - 31.02 = \mathbf{-9.73\text{ kg}}$ | $0.40 - 12.88 = \mathbf{-12.48\text{ kg}}$ | $33.77 - 51.59 = \mathbf{-17.82\text{ kg}}$ |
+| **Buffer Status** | Adequate if $B \ge SS$, else Deficit | $B_i, SS_i$ | **Deficit ($-45.71$)** | **Deficit ($-25.80$)** | **Deficit ($-43.01$)** |
+| **Forecast Daily Demand** | $\frac{1}{H}\sum_{t=1}^H \hat{D}_t$ | 7-day Holt-Winters forecast | **$22.52\text{ kg/day}$** | **$9.19\text{ kg/day}$** | **$13.02\text{ kg/day}$** |
+| **Avg Lead Time (d)** | $L_i$ | `full_lead_time_summary.csv` | **$1.65\text{ days}$** | **$1.65\text{ days}$** | **$3.84\text{ days}$** |
+| **Coverage Demand** | $\sum_{t=1}^{L+R} \hat{D}_t$ (prorated) | Forecast series, $L+R$ | $2.65\text{ days} \rightarrow \mathbf{54.20\text{ kg}}$ | $2.65\text{ days} \rightarrow \mathbf{22.37\text{ kg}}$ | $4.84\text{ days} \rightarrow \mathbf{68.31\text{ kg}}$ |
+| **Stock @ Delivery** | Projected stock on day $\lceil L_i \rceil$ | Trajectory at day $\lceil L_i \rceil$ | Day 2 balance: $\mathbf{-16.56\text{ kg}}$ | Day 2 balance: $\mathbf{-0.41\text{ kg}}$ | Day 4 balance: $\mathbf{54.32\text{ kg}}$ |
+| **Stockout Date** | First day where balance $\le 0$ | $S_{i,t} \le 0$ | **Day 2 (2026-09-24)** | **Day 1 (2026-09-23)** | **Day 3 (2026-09-25)** |
+| **Risk Status** | Critical / At Risk / Sufficient | $t_{\text{so}}, L_i, H, S_{\text{del}}, SS, B$ | **At Risk** ($t_{\text{so}} > L$, buffer deficit)| **Critical** ($t_{\text{so}} \le L$)| **Critical** ($t_{\text{so}} \le L$)|
+| **Eligible Incoming** | $\sum \text{pending\_qty}$ within cov | Approved POs | **$0.00\text{ kg}$** | **$15.00\text{ kg}$** (PO-758 on Day 2)| **$75.00\text{ kg}$** (PO-759 on Day 4)|
+| **Recommended Order (Q)** | $\max(0, D_{\text{cov}} + SS - (S_0 + \text{Inc}))$ | $D_{\text{cov}}, SS, S_0, \text{Incoming}$ | $\max(0, 54.20 + 35.98 - 21.29) = \mathbf{68.89\text{ kg}}$ | $\max(0, 22.37 + 13.32 - 15.40) = \mathbf{20.29\text{ kg}}$ | $\max(0, 68.31 + 25.19 - 108.77) = \mathbf{0.00\text{ kg}}$ |
+| **Data Confidence** | Based on completed PO count | Deliveries $N \ge 30 \implies \text{High}$ | **High** ($N = 162$ deliveries) | **High** ($N = 121$ deliveries) | **High** ($N = 37$ deliveries) |
+        """
+    )
+
+
+# -----------------------------
 # 10. Bottom Navigation Banner
 # -----------------------------
 st.markdown("---")
-c_link1, c_link2 = st.columns([3, 1])
-
-with c_link2:
-    st.page_link("pages/1_Place_Customer_Order.py")
+bot_c1, bot_c2 = st.columns(2)
+with bot_c1:
+    st.page_link("pages/1_Place_Customer_Order.py", label="Place Customer Order", icon="🛒")
+with bot_c2:
+    st.page_link("pages/2_Spoilage_Forecasting.py", label="Spoilage Forecasting", icon="🥀")

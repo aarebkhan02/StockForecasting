@@ -558,6 +558,27 @@ def style_availability_cell(val):
     return ""
 
 
+def style_reorder_status(val):
+    """Refined styling for reorder status in forecast tables."""
+    if val == "Reorder Required":
+        return (
+            "background-color: #fee2e2; color: #991b1b; "
+            "font-weight: 700; border-radius: 4px; padding: 2px 6px;"
+        )
+    elif val == "No Reorder Required":
+        return (
+            "background-color: #d1fae5; color: #065f46; "
+            "font-weight: 700; border-radius: 4px; padding: 2px 6px;"
+        )
+    elif val == "Unknown":
+        return (
+            "background-color: #f1f5f9; color: #475569; "
+            "font-weight: 500; border-radius: 4px; padding: 2px 6px;"
+        )
+    return ""
+
+
+
 def apply_plotly_theme(fig, height=390):
     """
     Apply a consistent modern theme to Plotly figures.

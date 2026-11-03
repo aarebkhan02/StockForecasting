@@ -616,7 +616,7 @@ def compute_all_replenishment_metrics(
 
         # Lead time lookup
         lead_match = lead_df[lead_df["ingredient_id"] == ing_id]
-        if lead_match.empty:
+        if lead_match.empty or pd.isna(lead_match.iloc[0].get("avg_full_lead_time_days")):
             data_warnings.append("No historical lead-time record found in full_lead_time_summary.csv.")
             lead_time_days = 3.0
             median_lead_time = 3.0

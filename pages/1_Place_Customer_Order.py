@@ -92,6 +92,7 @@ with st.sidebar:
     st.markdown("### 🧭 Navigation")
     st.page_link("app.py", label="Replenishment Dashboard", icon="📊")
     st.page_link("pages/1_Place_Customer_Order.py", label="Place Customer Order", icon="🛒")
+    st.page_link("pages/2_Spoilage_Forecasting.py", label="Spoilage Forecasting", icon="🥀")
     st.divider()
 
     st.markdown("### 🔄 Operational Stock Control")
@@ -406,6 +407,10 @@ else:
                         st.error(f"❌ Shortage: **{s['name']}** is short by **{s['short']} {s['unit']}**.")
 
 
-# Return to dashboard link
+# Navigation links
 st.markdown("---")
-st.page_link("app.py", label="← Return to Replenishment Dashboard", icon="📊")
+bot_c1, bot_c2 = st.columns(2)
+with bot_c1:
+    st.page_link("app.py", label="← Return to Replenishment Dashboard", icon="📊")
+with bot_c2:
+    st.page_link("pages/2_Spoilage_Forecasting.py", label="Go to Spoilage Forecasting", icon="🥀")
