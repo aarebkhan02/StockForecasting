@@ -186,8 +186,11 @@ def simulate_fefo_trajectory(
     """
     dates = forecast_series.index.tolist()
     days_count = len(dates)
+    start_date = pd.to_datetime(dates[0]).normalize() if dates else None
 
-    # Deep copy active batches for this simulation
+    # Deep copy active batches for this simulation, excluding batches that expired before forecast_start_date.
+    # Batches expiring on or after start_date are kept; batches expiring on start_date will be processed
+    # as Day 1 start-of-day expiry waste per the 00:00 discard rule.
     curr_batches = [
         {
             "batch_number": b["batch_number"],
@@ -198,6 +201,7 @@ def simulate_fefo_trajectory(
             "unit_cost": float(b["unit_cost"]),
         }
         for b in batches
+        if start_date is None or pd.to_datetime(b["expiry_date"]).normalize() >= start_date
     ]
 
     ing_incoming = (
@@ -504,23 +508,36 @@ def compute_all_spoilage_metrics(
         # Usable stock at snapshot: batches with expiry_date >= forecast_start_date
         d1_norm = pd.to_datetime(forecast_dates[0]).normalize()
         usable_stock_start = sum(
-            float(b["batch_stock"]) for b in batches if b["expiry_date"] >= d1_norm
+            float(b["batch_stock"]) for b in batches if pd.to_datetime(b["expiry_date"]).normalize() >= d1_norm
         )
         expired_at_start = sum(
-            float(b["batch_stock"]) for b in batches if b["expiry_date"] < d1_norm
+            float(b["batch_stock"]) for b in batches if pd.to_datetime(b["expiry_date"]).normalize() < d1_norm
         )
+
+        # Filter batches for simulation: exclude batches that expired before forecast start date.
+        # Batches expiring on or after d1_norm are kept (batches expiring on d1_norm are processed
+        # as Day 1 start-of-day expiry in simulation).
+        valid_simulation_batches = [
+            b for b in batches if pd.to_datetime(b["expiry_date"]).normalize() >= d1_norm
+        ]
 
         # Average unit cost from actual receipts
-        total_batch_stock = sum(float(b["batch_stock"]) for b in batches)
-        avg_unit_cost = (
-            sum(b["batch_stock"] * b["unit_cost"] for b in batches) / total_batch_stock
-            if total_batch_stock > 0
-            else 0.0
-        )
+        total_valid_stock = sum(float(b["batch_stock"]) for b in valid_simulation_batches)
+        if total_valid_stock > 0:
+            avg_unit_cost = (
+                sum(b["batch_stock"] * b["unit_cost"] for b in valid_simulation_batches) / total_valid_stock
+            )
+        else:
+            total_batch_stock = sum(float(b["batch_stock"]) for b in batches)
+            avg_unit_cost = (
+                sum(b["batch_stock"] * b["unit_cost"] for b in batches) / total_batch_stock
+                if total_batch_stock > 0
+                else 0.0
+            )
 
-        # Run FEFO simulation
+        # Run FEFO simulation with valid unexpired batches
         fefo_res = simulate_fefo_trajectory(
-            batches,
+            valid_simulation_batches,
             forecast_series,
             incoming_df,
             ing_id,
@@ -553,6 +570,11 @@ def compute_all_spoilage_metrics(
 
         # Usable stock at expected delivery day ceil(L_i)
         usable_at_delivery = float(fefo_res["usable_stock_at_delivery"])
+
+        # Usable Safety Stock Protection Check:
+        # Compare usable stock at expected delivery with required safety stock
+        usable_ss_status = "Protected" if usable_at_delivery >= safety_stock else "Deficit"
+        usable_ss_deficit = round(max(0.0, safety_stock - usable_at_delivery), 2)
 
         # Eligible incoming deliveries within coverage window
         cov_end_date = forecast_dates[0] + pd.Timedelta(days=cov_ceil)
@@ -654,9 +676,15 @@ def compute_all_spoilage_metrics(
             "Expected Expiry Waste": round(waste_in_coverage, 2),
             "Baseline Recommended Order": round(base_recommended_order, 2),
             "Recommended Order Quantity": round(q_adj_recommended, 2),
+            "Usable Safety Stock Status": usable_ss_status,
+            "Safety Stock Deficit (kg/L)": usable_ss_deficit,
+            # Explicit standard keys:
+            "usable_safety_stock_status": usable_ss_status,
+            "usable_safety_stock_deficit": usable_ss_deficit,
             # Metadata for audit/filters
             "_ingredient_id": ing_id,
             "_ingredient_name": ing_name,
+            "_uom_code": base_uom_code,
             "_lead_time_days": lead_time_days,
             "_lead_time_display": lead_time_display,
             "_reorder_status": reorder_status,
@@ -699,6 +727,9 @@ def compute_all_spoilage_metrics(
             "early_stockout_accelerated": early_stockout,
             "base_recommended_order": base_recommended_order,
             "expiry_adjusted_order": q_adj_recommended,
+            "usable_stock_at_delivery": round(usable_at_delivery, 2),
+            "usable_safety_stock_status": usable_ss_status,
+            "usable_safety_stock_deficit": usable_ss_deficit,
             "batches": batches,
         })
 

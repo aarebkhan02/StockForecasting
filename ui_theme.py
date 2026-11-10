@@ -578,6 +578,30 @@ def style_reorder_status(val):
     return ""
 
 
+def style_usable_ss_status(val):
+    """Refined styling for usable safety stock protection status."""
+    if val == "Protected":
+        return (
+            "background-color: #d1fae5; color: #065f46; "
+            "font-weight: 700; border-radius: 4px; padding: 2px 6px;"
+        )
+    elif val == "Deficit":
+        return (
+            "background-color: #fee2e2; color: #991b1b; "
+            "font-weight: 700; border-radius: 4px; padding: 2px 6px;"
+        )
+    return ""
+
+
+def style_usable_ss_deficit(val):
+    """Refined styling for usable safety stock deficit values."""
+    if isinstance(val, (int, float)) and val > 0:
+        return "background-color: #fef2f2; color: #b91c1c; font-weight: 700;"
+    elif isinstance(val, str) and not val.strip().startswith("0.00") and not val.strip() == "0":
+        return "background-color: #fef2f2; color: #b91c1c; font-weight: 700;"
+    return ""
+
+
 
 def apply_plotly_theme(fig, height=390):
     """

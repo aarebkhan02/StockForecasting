@@ -27,7 +27,11 @@ from spoilage_engine import (
 try:
     import ui_theme
     importlib.reload(ui_theme)
-    from ui_theme import style_reorder_status
+    from ui_theme import (
+        style_reorder_status,
+        style_usable_ss_status,
+        style_usable_ss_deficit,
+    )
 except ImportError:
     def style_reorder_status(val):
         if val == "Reorder Required":
@@ -36,6 +40,20 @@ except ImportError:
             return "background-color: #d1fae5; color: #065f46; font-weight: 700; border-radius: 4px; padding: 2px 6px;"
         elif val == "Unknown":
             return "background-color: #f1f5f9; color: #475569; font-weight: 500; border-radius: 4px; padding: 2px 6px;"
+        return ""
+
+    def style_usable_ss_status(val):
+        if val == "Protected":
+            return "background-color: #d1fae5; color: #065f46; font-weight: 700; border-radius: 4px; padding: 2px 6px;"
+        elif val == "Deficit":
+            return "background-color: #fee2e2; color: #991b1b; font-weight: 700; border-radius: 4px; padding: 2px 6px;"
+        return ""
+
+    def style_usable_ss_deficit(val):
+        if isinstance(val, (int, float)) and val > 0:
+            return "background-color: #fef2f2; color: #b91c1c; font-weight: 700;"
+        elif isinstance(val, str) and not val.strip().startswith("0.00") and not val.strip() == "0":
+            return "background-color: #fef2f2; color: #b91c1c; font-weight: 700;"
         return ""
 
 
@@ -424,9 +442,28 @@ essential_reorder_cols = [
     "Expected Expiry Waste",
     "Baseline Recommended Order",
     "Recommended Order Quantity",
+    "Usable Safety Stock Status",
+    "Safety Stock Deficit (kg/L)",
 ]
 
+# Visible warning when usable stock at expected delivery falls below required safety stock
+deficit_items = filtered_reorder_df[filtered_reorder_df["usable_safety_stock_status"] == "Deficit"]
+if not deficit_items.empty:
+    deficit_details = ", ".join([
+        f"**{r['_ingredient_name']}** ({r['usable_safety_stock_deficit']:.2f} {r['_uom_code']} deficit)"
+        for _, r in deficit_items.iterrows()
+    ])
+    st.warning(
+        f"⚠️ **Usable Safety Stock Deficit Alert:** {len(deficit_items)} ingredient(s) have projected usable stock at delivery falling below required safety stock: {deficit_details}.",
+        icon="⚠️"
+    )
+
 display_reorder_table = filtered_reorder_df[essential_reorder_cols].copy()
+# Format displayed deficit using each ingredient's base UOM
+display_reorder_table["Safety Stock Deficit (kg/L)"] = [
+    f"{r['usable_safety_stock_deficit']:.2f} {r['_uom_code']}"
+    for _, r in filtered_reorder_df.iterrows()
+]
 
 def style_reorder_adj(val, diff):
     if diff > 0:
@@ -451,13 +488,15 @@ if not display_reorder_table.empty:
             "Recommended Order Quantity": "{:.2f}",
         })
         .map(style_spoilage_qty, subset=["Expected Expiry Waste"])
+        .map(style_usable_ss_status, subset=["Usable Safety Stock Status"])
+        .map(style_usable_ss_deficit, subset=["Safety Stock Deficit (kg/L)"])
         .apply(highlight_adjusted_rows, axis=1)
     )
     st.dataframe(styled_reorder, use_container_width=True, hide_index=True)
 else:
     st.info("No ingredients require an expiry-adjusted order.")
 
-st.caption("ℹ️ *Expected Expiry Waste represents unusable stock projected to expire within the lead time + review period coverage window (L_i + R). Expiry waste is never subtracted twice.*")
+st.caption("ℹ️ *Expected Expiry Waste represents unusable stock projected to expire within the lead time + review period coverage window (L_i + R). Usable Safety Stock Status verifies whether unexpired inventory at expected delivery date safely maintains the required safety stock buffer.*")
 
 
 
