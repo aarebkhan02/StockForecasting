@@ -603,114 +603,46 @@ sel_lead_time = float(ing_data["lead_time_days"])
 traj_dict = replenishment_metrics["trajectories"][sel_id]
 traj_table = traj_dict["trajectory_df"]
 
-chart_c1, chart_c2 = st.columns(2)
+st.markdown(
+    f"""
+    <div class="rms-chart-title">
+        <span>📈</span> 7-Day Demand Forecast: <span style="color:#2563eb;">{selected_ing_name}</span>
+    </div>
+    <div class="rms-chart-subtitle">Historical daily consumption vs Holt-Winters additive seasonal model.</div>
+    """,
+    unsafe_allow_html=True
+)
+hist_sub = master_data["demand_df"][master_data["demand_df"]["ingredient_id"] == sel_id].sort_values("date")
+f_series = forecast_results["forecasts"][sel_id]
 
-with chart_c1:
-    st.markdown(
-        f"""
-        <div class="rms-chart-title">
-            <span>📈</span> 7-Day Demand Forecast: <span style="color:#2563eb;">{selected_ing_name}</span>
-        </div>
-        <div class="rms-chart-subtitle">Historical daily consumption vs Holt-Winters additive seasonal model.</div>
-        """,
-        unsafe_allow_html=True
-    )
-    hist_sub = master_data["demand_df"][master_data["demand_df"]["ingredient_id"] == sel_id].sort_values("date")
-    f_series = forecast_results["forecasts"][sel_id]
-
-    fig_demand = go.Figure()
-    # Last 45 days historical demand
-    recent_hist = hist_sub.tail(45)
-    fig_demand.add_trace(go.Scatter(
-        x=recent_hist["date"],
-        y=recent_hist["daily_demand"],
-        mode="lines",
-        name="Historical Daily Demand",
-        line=dict(color="#64748b", width=1.75),
-        fill="tozeroy",
-        fillcolor="rgba(100, 116, 139, 0.06)",
-        hovertemplate="<b>Date</b>: %{x}<br><b>Historical Demand</b>: %{y:.2f} " + sel_unit + "<extra></extra>"
-    ))
-    fig_demand.add_trace(go.Scatter(
-        x=f_series.index,
-        y=f_series.values,
-        mode="lines+markers",
-        name="Holt-Winters 7-Day Forecast",
-        line=dict(color="#f97316", width=2.75),
-        marker=dict(size=7, color="#ea580c", line=dict(color="#ffffff", width=1.5)),
-        hovertemplate="<b>Date</b>: %{x}<br><b>Forecast Demand</b>: %{y:.2f} " + sel_unit + "<extra></extra>"
-    ))
-    fig_demand.update_layout(
-        xaxis_title="Date",
-        yaxis_title=f"Demand ({sel_unit}/day)"
-    )
-    apply_plotly_theme(fig_demand, height=390)
-    st.plotly_chart(fig_demand, use_container_width=True)
-
-with chart_c2:
-    st.markdown(
-        f"""
-        <div class="rms-chart-title">
-            <span>📉</span> Projected Inventory Trajectory: <span style="color:#2563eb;">{selected_ing_name}</span>
-        </div>
-        <div class="rms-chart-subtitle">Stock depletion simulation vs safety stock threshold and verified PO arrivals.</div>
-        """,
-        unsafe_allow_html=True
-    )
-    traj_x = ["Day 0 (Snapshot)"] + [f"Day {row['day']} ({row['date_str']})" for _, row in traj_table.iterrows()]
-    traj_y = [sel_current_stock] + traj_table["projected_unconstrained"].tolist()
-
-    fig_traj = go.Figure()
-    # Projected inventory line
-    fig_traj.add_trace(go.Scatter(
-        x=traj_x,
-        y=traj_y,
-        mode="lines+markers",
-        name="Projected Inventory",
-        line=dict(color="#2563eb", width=2.75),
-        marker=dict(size=6, color="#1d4ed8", line=dict(color="#ffffff", width=1.5)),
-        hovertemplate="<b>Timeline</b>: %{x}<br><b>Projected Stock</b>: %{y:.2f} " + sel_unit + "<extra></extra>"
-    ))
-    # Required Safety Stock threshold
-    fig_traj.add_trace(go.Scatter(
-        x=traj_x,
-        y=[sel_safety_stock] * len(traj_x),
-        mode="lines",
-        name="Required Safety Stock (SS)",
-        line=dict(color="#dc2626", width=2, dash="dash"),
-        hovertemplate="<b>Required SS</b>: %{y:.2f} " + sel_unit + "<extra></extra>"
-    ))
-    # Zero stockout boundary
-    fig_traj.add_trace(go.Scatter(
-        x=traj_x,
-        y=[0.0] * len(traj_x),
-        mode="lines",
-        name="Zero Boundary",
-        line=dict(color="#94a3b8", width=1.5, dash="dot"),
-        hoverinfo="skip"
-    ))
-
-    # Mark verified incoming deliveries
-    for _, row in traj_table.iterrows():
-        if row["confirmed_receipts"] > 0:
-            fig_traj.add_annotation(
-                x=f"Day {row['day']} ({row['date_str']})",
-                y=row["projected_unconstrained"],
-                text=f"📦 +{row['confirmed_receipts']:.1f} {sel_unit}",
-                showarrow=True,
-                arrowhead=2,
-                arrowcolor="#059669",
-                bgcolor="#f0fdf4",
-                bordercolor="#059669",
-                font=dict(color="#047857", size=10, family="Inter, sans-serif")
-            )
-
-    fig_traj.update_layout(
-        xaxis_title="Timeline",
-        yaxis_title=f"Stock ({sel_unit})"
-    )
-    apply_plotly_theme(fig_traj, height=390)
-    st.plotly_chart(fig_traj, use_container_width=True)
+fig_demand = go.Figure()
+# Last 45 days historical demand
+recent_hist = hist_sub.tail(45)
+fig_demand.add_trace(go.Scatter(
+    x=recent_hist["date"],
+    y=recent_hist["daily_demand"],
+    mode="lines",
+    name="Historical Daily Demand",
+    line=dict(color="#64748b", width=1.75),
+    fill="tozeroy",
+    fillcolor="rgba(100, 116, 139, 0.06)",
+    hovertemplate="<b>Date</b>: %{x}<br><b>Historical Demand</b>: %{y:.2f} " + sel_unit + "<extra></extra>"
+))
+fig_demand.add_trace(go.Scatter(
+    x=f_series.index,
+    y=f_series.values,
+    mode="lines+markers",
+    name="Holt-Winters 7-Day Forecast",
+    line=dict(color="#f97316", width=2.75),
+    marker=dict(size=7, color="#ea580c", line=dict(color="#ffffff", width=1.5)),
+    hovertemplate="<b>Date</b>: %{x}<br><b>Forecast Demand</b>: %{y:.2f} " + sel_unit + "<extra></extra>"
+))
+fig_demand.update_layout(
+    xaxis_title="Date",
+    yaxis_title=f"Demand ({sel_unit}/day)"
+)
+apply_plotly_theme(fig_demand, height=390)
+st.plotly_chart(fig_demand, use_container_width=True)
 
 
 # -----------------------------

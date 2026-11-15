@@ -339,7 +339,6 @@ essential_daily_cols = [
     "Reorder Status",
     "Shelf Life",
     "Current Usable Stock",
-    "Next-Day Demand",
     "Daily Forecast Demand",
     "Estimated Preparation Waste",
     "Days Until Expiry",
@@ -376,7 +375,6 @@ if not display_daily_table.empty:
         display_daily_table.style
         .format({
             "Current Usable Stock": "{:.2f}",
-            "Next-Day Demand": "{:.2f}",
             "Daily Forecast Demand": "{:.2f}",
             "Estimated Preparation Waste": "{:.2f}",
             "Expiring Quantity": "{:.2f}",
