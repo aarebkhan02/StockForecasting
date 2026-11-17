@@ -421,17 +421,7 @@ st.caption(
     "Orders are never placed automatically."
 )
 
-reorder_filter_c1, reorder_filter_c2 = st.columns([3, 3])
-with reorder_filter_c1:
-    reorder_mode = st.radio(
-        "Filter Reorder Table",
-        options=["All 14 Ingredients", "Ingredients with Order Adjustments Only (Q_adj > Q_base)"],
-        horizontal=True
-    )
-
 filtered_reorder_df = reorder_df.copy()
-if "Adjustments Only" in reorder_mode:
-    filtered_reorder_df = filtered_reorder_df[filtered_reorder_df["_order_difference"] > 0]
 
 essential_reorder_cols = [
     "Ingredient",
